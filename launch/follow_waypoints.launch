@@ -7,7 +7,7 @@
   <arg name="waypoints_to_follow_topic" default="/initialpose"/>
   <arg name="waypoints_list_topic" default="/waypoints"/>
   <arg name="waypoints_are_poses" default="true"/>
-  <arg name="patrol_mode" default="false"/>
+  <arg name="patrol_mode" default="true"/>
 
   <param name="goal_frame_id" value="$(arg goal_frame_id)"/>
   <param name="wait_duration" value="$(arg wait_duration)"/>
