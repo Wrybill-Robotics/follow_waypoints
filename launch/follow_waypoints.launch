@@ -4,7 +4,7 @@
   <arg name="goal_frame_id" default="map"/>
   <arg name="wait_duration" default="0.0"/>
   <arg name="waypoint_distance_tolerance" default="0.0"/>
-  <arg name="waypoints_to_follow_topic" default="/initialpose"/>
+  <arg name="waypoints_to_follow_topic" default="/waypoint_pose"/>
   <arg name="waypoints_list_topic" default="/waypoints"/>
   <arg name="waypoints_are_poses" default="true"/>
   <arg name="patrol_mode" default="false"/>
