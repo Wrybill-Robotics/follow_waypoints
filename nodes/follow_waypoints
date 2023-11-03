@@ -39,6 +39,8 @@ class Commander(object):
         )
         self.waypoints_list_topic = rospy.get_param("waypoints_list_topic", "/waypoints")
 
+        print(f"base: {self.base_frame_id}, odom: {self.odom_frame_id}, map: {self.frame_id}, waypoint_topic: {self.waypoints_to_follow_topic}, waypoints_list: {self.waypoints_list_topic}")
+
         # listen to points or to poses?
         waypoints_are_poses = rospy.get_param("waypoints_are_poses", True)
 
@@ -213,7 +215,7 @@ class Commander(object):
 def toPoseArray(waypoints):
     """Publish waypoints as a pose array so that you can see them in rviz."""
     poses = PoseArray()
-    poses.header.frame_id = rospy.get_param("~goal_frame_id", "map")
+    poses.header.frame_id = rospy.get_param("goal_frame_id", "map")
     poses.poses = [pose.pose.pose for pose in waypoints]
     return poses
 
