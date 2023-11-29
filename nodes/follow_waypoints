@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import collections
 import time
@@ -89,7 +89,7 @@ class Commander(object):
 
     def make_path_ready(self, _):
         self.path_ready = True
-        return (True, "")
+        return {"success" : True, "message" : "Path ready."}
 
     def do_path_reset(self, _):
         warn("Issuing cancel command to move_base")
