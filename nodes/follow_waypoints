@@ -12,7 +12,7 @@ from follow_waypoints.cfg import FollowWaypointsConfig
 from geometry_msgs.msg import PointStamped, PoseArray, PoseWithCovarianceStamped, Quaternion
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_srvs.srv import Trigger
-
+from std_msgs.msg import Int8
 # Miscellaneous functions
 info = rospy.loginfo
 warn = rospy.logwarn
@@ -67,7 +67,7 @@ class Commander(object):
         # Subscribers & Publishers & Services initialisation ----------------------------------
         self.path_ready_srv = rospy.Service("path_ready", Trigger, self.make_path_ready)
         self.path_reset_srv = rospy.Service("path_reset", Trigger, self.do_path_reset)
-
+        self.state_pub = rospy.Publisher('/robot_state',Int8, queue_size=1)
         # Publish waypoints as pose array - visualise them in rviz
         self.pose_array_publisher = rospy.Publisher(
             self.waypoints_list_topic, PoseArray, queue_size=1, latch=True
@@ -204,7 +204,10 @@ class Commander(object):
 
             # current waypoint has now been reached! move on to the next waypoint on the next
             # iteration
-
+        # Follow Waypoints Done Publish State of 0 = idle
+        state_msg = Int8()
+        state_msg.data = 0
+        self.state_pub.publish(state_msg)
 
     def run(self):
         while not rospy.is_shutdown():
