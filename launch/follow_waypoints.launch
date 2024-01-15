@@ -23,8 +23,8 @@
 
   <node pkg="follow_waypoints" type="follow_waypoints" name="follow_waypoints" output="$(arg output)" required="true"/>
 
-  <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters follow_waypoints">
+  <!-- <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters follow_waypoints">
     <param name="patrol_mode" type="bool" value="$(arg patrol_mode)" />
-  </node>
+  </node> -->
 </launch>
 
