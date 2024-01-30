@@ -169,17 +169,17 @@ class Commander(object):
                 if self.move_base_client.wait_for_result(): #if goal is complete, process next goal else, re-attempt the goal
                     info("Waiting for %f seconds before proceeding to the next goal..." % self.wait_duration)
                     time.sleep(self.wait_duration)
-                    if self.dyn_config["patrol_mode"]:
-                        if len(self.waypoints) == 1:
-                            warn(
-                                "In patrol mode but wth only one given waypoint, will simply navigate to it..."
-                            )
-                            self.waypoints.pop()
-                        else:
-                            self.waypoints.rotate(-1)
-                    else:
+                    # if self.dyn_config["patrol_mode"]:
+                    #     if len(self.waypoints) == 1:
+                    #         warn(
+                    #             "In patrol mode but wth only one given waypoint, will simply navigate to it..."
+                    #         )
+                    #         self.waypoints.pop()
+                    #     else:
+                    #         self.waypoints.rotate(-1)
+                    # else:
                         # not in patrol mode - forget about this waypoint
-                        self.waypoints.popleft()
+                    self.waypoints.popleft()
                 else:
                     info("follow_waypoints: failed to reach goal, re-attempting")
                 self.pub_waypoints_list()
