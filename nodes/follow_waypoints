@@ -206,7 +206,7 @@ class Commander(object):
             # iteration
         # Follow Waypoints Done Publish State of 0 = idle
         state_msg = Int8()
-        state_msg.data = 0
+        state_msg.data = 6
         self.state_pub.publish(state_msg)
 
     def run(self):
