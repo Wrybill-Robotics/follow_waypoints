@@ -12,6 +12,7 @@ from follow_waypoints.cfg import FollowWaypointsConfig
 from geometry_msgs.msg import PointStamped, PoseArray, PoseWithCovarianceStamped, Quaternion
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from std_srvs.srv import Trigger
+from std_msgs.msg import Bool
 from std_msgs.msg import Int8
 # Miscellaneous functions
 info = rospy.loginfo
@@ -68,6 +69,7 @@ class Commander(object):
         self.path_ready_srv = rospy.Service("path_ready", Trigger, self.make_path_ready)
         self.path_reset_srv = rospy.Service("path_reset", Trigger, self.do_path_reset)
         self.state_pub = rospy.Publisher('/robot_state',Int8, queue_size=1)
+        self.move_base_stop = rospy.Publisher("/move_base/stop", Bool, queue_size=1)
         # Publish waypoints as pose array - visualise them in rviz
         self.pose_array_publisher = rospy.Publisher(
             self.waypoints_list_topic, PoseArray, queue_size=1, latch=True
@@ -88,13 +90,23 @@ class Commander(object):
         return self.dyn_config
 
     def make_path_ready(self, _):
+        # pub False to /move_base/stop
+        data = Bool()
+        data.data = False
+        self.move_base_stop.publish(data)
+        
         self.path_ready = True
         return {"success" : True, "message" : "Path ready."}
 
     def do_path_reset(self, _):
-        warn("Issuing cancel command to move_base")
+        rospy.loginfo("Issuing cancel command to move_base")
         pub = rospy.Publisher("/move_base/cancel", GoalID, queue_size=1)
         pub.publish(GoalID())
+        data = Int8()
+        data.data = 0
+        robot_state = rospy.Publisher("/robot_state", Int8, queue_size=1)
+        robot_state.publish(data)
+
         warn("move_base goal cancelled.")
 
         if self.waypoints:
@@ -179,7 +191,7 @@ class Commander(object):
                     #         self.waypoints.rotate(-1)
                     # else:
                         # not in patrol mode - forget about this waypoint
-                    self.waypoints.popleft()
+                    if self.waypoints: self.waypoints.popleft()
                 else:
                     info("follow_waypoints: failed to reach goal, re-attempting")
                 self.pub_waypoints_list()
