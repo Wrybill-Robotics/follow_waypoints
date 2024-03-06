@@ -68,6 +68,7 @@ class Commander(object):
         # Subscribers & Publishers & Services initialisation ----------------------------------
         self.path_ready_srv = rospy.Service("path_ready", Trigger, self.make_path_ready)
         self.path_reset_srv = rospy.Service("path_reset", Trigger, self.do_path_reset)
+        self.path_clear_srv = rospy.ServiceProxy("clear_path", Trigger)
         self.state_pub = rospy.Publisher('/robot_state',Int8, queue_size=1)
         self.move_base_stop = rospy.Publisher("/move_base/stop", Bool, queue_size=1)
         # Publish waypoints as pose array - visualise them in rviz
@@ -94,18 +95,26 @@ class Commander(object):
         data = Bool()
         data.data = False
         self.move_base_stop.publish(data)
+
+        # pub robot state = 5
+        data = Int8()
+        data.data = 5
+        self.state_pub.publish(data)
         
         self.path_ready = True
         return {"success" : True, "message" : "Path ready."}
 
     def do_path_reset(self, _):
         rospy.loginfo("Issuing cancel command to move_base")
-        pub = rospy.Publisher("/move_base/cancel", GoalID, queue_size=1)
-        pub.publish(GoalID())
+        # clear stop recording and clear path
+        value = self.path_clear_srv
+        # set robot state to idle
         data = Int8()
-        data.data = 0
+        data.data = 6
         robot_state = rospy.Publisher("/robot_state", Int8, queue_size=1)
         robot_state.publish(data)
+        pub = rospy.Publisher("/move_base/cancel", GoalID, queue_size=1)
+        pub.publish(GoalID())
 
         warn("move_base goal cancelled.")
 
@@ -217,6 +226,7 @@ class Commander(object):
             # current waypoint has now been reached! move on to the next waypoint on the next
             # iteration
         # Follow Waypoints Done Publish State of 0 = idle
+        print("I got triggered")
         state_msg = Int8()
         state_msg.data = 6
         self.state_pub.publish(state_msg)
